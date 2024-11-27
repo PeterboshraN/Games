@@ -1,11 +1,8 @@
 #ifndef BOARDGAME_CLASSES_H
 #define BOARDGAME_CLASSES_H
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <cstdlib>
-#include <ctime>
+#include <bits/stdc++.h>
+
 
 using namespace std;
 
