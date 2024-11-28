@@ -1,12 +1,8 @@
 #ifndef BOARDGAME_CLASSES_H
 #define BOARDGAME_CLASSES_H
-
 #include <bits/stdc++.h>
-
-
 using namespace std;
 
-// Abstract Board class
 class Board {
 public:
     virtual void display_board() = 0;
@@ -17,7 +13,6 @@ public:
     virtual ~Board() = default;
 };
 
-// Player class
 class Player {
 protected:
     string name;
@@ -25,28 +20,43 @@ protected:
 
 public:
     Player(const string& name, char symbol) : name(name), symbol(symbol) {}
+
+    string get_name() { return name; }
+    char get_symbol() { return symbol; }
+
     virtual void get_move(int& x, int& y) = 0;
-    string get_name() const { return name; }
-    char get_symbol() const { return symbol; }
+
     virtual ~Player() = default;
 };
 
-// Random Player class
-class RandomPlayer : public Player {
+class HumanConnectPlayer : public Player {
 public:
-    RandomPlayer(const string& name, char symbol) : Player(name, symbol) {
-        srand(time(0));
-    }
+    HumanConnectPlayer(const string& name, char symbol) : Player(name, symbol) {}
 
     void get_move(int& x, int& y) {
-        x = rand() % 3;
-        y = rand() % 3;
+        cout << "please enter your move column as like => (1 1) or (2 2)\n";
+        cout << name << ", enter your move (column): ";
+        cin >> x >> y;
+        x--;
+        y--;
     }
 };
 
-// Game Manager class
+class RandomConnectPlayer : public Player {
+public:
+    RandomConnectPlayer(const string& name, char symbol) : Player(name, symbol) {
+        srand(static_cast<unsigned>(time(0)));
+    }
+
+    void get_move(int& x, int& y) {
+        x = rand() % 6;
+        y = rand() % 7;
+        cout << name << " chooses row " << x + 1 << " and column " << y + 1 << endl;
+    }
+};
+
 class GameManager {
-private:
+protected:
     Board* board;
     Player* players[2];
 
@@ -57,33 +67,9 @@ public:
         players[1] = player2;
     }
 
-    void run() {
-        int x, y;
-        board->display_board();
+    virtual void run() = 0;
 
-        while (!board->game_is_over()) {
-            for (int i = 0; i < 2; ++i) {
-                Player* current_player = players[i];
-                do {
-                    current_player->get_move(x, y);
-                } while (!board->update_board(x, y, current_player->get_symbol()));
-
-                board->display_board();
-
-                if (board->is_win(current_player->get_symbol())) {
-                    cout << current_player->get_name() << " wins!" << endl;
-                    return;
-                }
-
-                if (board->is_draw()) {
-                    cout << "It's a draw!" << endl;
-                    return;
-                }
-            }
-        }
-    }
-
-    ~GameManager() {
+    virtual ~GameManager() {
         delete board;
         delete players[0];
         delete players[1];
