@@ -77,9 +77,21 @@ public:
     }
 
     void get_move(Board* board, int& x, int& y, int& num) override {
+        cout << "Available numbers: ";
+        for (int available_num : available_numbers) {
+            cout << available_num << " ";
+        }
+        cout << endl;
+
         cout << name << ", enter your move (row column number): ";
         cin >> x >> y >> num;
         x--; y--;
+        if (is_number_valid(num)) {
+            remove_number(num);
+        } else {
+            cout << "Invalid number. Please choose another number from the available ones." << endl;
+            get_move(board, x, y, num);
+        }
     }
 
     bool is_number_valid(int num) {
