@@ -213,12 +213,11 @@ WordAiPlayer<T>::WordAiPlayer(T symbol) : Player<T>(symbol) {
 // Method to get the best move for the player
 template <typename T>
 void WordAiPlayer<T>::getmove(int& x, int& y) {
-    std::pair<int, int> bestMove = getBestMove();
-
-    x = bestMove.first;
-    y = bestMove.second;
+    std::pair<std::pair<int, int>, T> bestMove = getBestMove();
+    x = bestMove.first.first;
+    y = bestMove.first.second;
+    this -> symbol = bestMove.second;
 }
-
 // Minimax algorithm to evaluate the board
 template <typename T>
 int WordAiPlayer<T>::calculateMinMax(T s, bool isMaximizing) {
@@ -253,8 +252,10 @@ int WordAiPlayer<T>::calculateMinMax(T s, bool isMaximizing) {
 template <typename T>
 std::pair<int, int> WordAiPlayer<T>::getBestMove() {
     int bestValue = std::numeric_limits<int>::min();
-    std::pair<int, int> bestMove = {-1, -1};
-    T opponentSymbol = (this->symbol == 'X') ? 'O' : 'X';
+    std::pair<std::pair<int, int>, T> bestMove = {{-1, -1}, 'A'};
+
+    int randomIndex = rand() % 26;
+    T opponentSymbol = 'A' + randomIndex;;
 
     // First, check if we can win in the next move
     for (int i = 0; i < 3; ++i) {
