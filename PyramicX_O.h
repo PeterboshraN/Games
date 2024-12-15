@@ -265,5 +265,5 @@ std::pair<int, int> PyramicAiPlayer<T>::getBestMove() {
 
 
 
-#endif //_3X3X_O_H
+#endif 
 
