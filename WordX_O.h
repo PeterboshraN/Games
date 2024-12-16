@@ -1,4 +1,3 @@
-
 #ifndef WORDX_O_H
 #define WORDX_O_H
 
@@ -13,7 +12,6 @@ public:
     bool is_win() ;
     bool is_draw();
     bool game_is_over();
-
 
 };
 
@@ -31,20 +29,6 @@ public:
     WordRandomPlayer (T symbol);
     void getmove(int &x, int &y) ;
 };
-
-
-template <typename T>
-class WordAiPlayer : public Player<T> {
-public:
-    WordAiPlayer(T symbol);
-
-    void getmove(int& x, int& y) override;
-
-private:
-    int calculateMinMax(T s, bool isMaximizing);
-    std::pair<int, int> getBestMove();
-};
-
 
 
 //--------------------------------------- IMPLEMENTATION
@@ -203,107 +187,4 @@ void WordRandomPlayer<T>::getmove(int& x, int& y) {
 
 
 
-
-// Constructor for the templated class
-template <typename T>
-WordAiPlayer<T>::WordAiPlayer(T symbol) : Player<T>(symbol) {
-    this->name = "AI Player";
-}
-
-// Method to get the best move for the player
-template <typename T>
-void WordAiPlayer<T>::getmove(int& x, int& y) {
-    std::pair<std::pair<int, int>, T> bestMove = getBestMove();
-    x = bestMove.first.first;
-    y = bestMove.first.second;
-    this -> symbol = bestMove.second;
-}
-// Minimax algorithm to evaluate the board
-template <typename T>
-int WordAiPlayer<T>::calculateMinMax(T s, bool isMaximizing) {
-    if (this->boardPtr->is_win()) {
-        return isMaximizing ? -1 : 1;
-    } else if (this->boardPtr->is_draw()) {
-        return 0;
-    }
-
-    int bestValue = isMaximizing ? std::numeric_limits<int>::min() : std::numeric_limits<int>::max();
-    T opponentSymbol = (s == 'X') ? 'O' : 'X';
-
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            if (this->boardPtr->update_board(i, j, s)) {
-                int value = calculateMinMax(opponentSymbol, !isMaximizing);
-                this->boardPtr->update_board(i, j, 0); // Undo move
-
-                if (isMaximizing) {
-                    bestValue = std::max(bestValue, value);
-                } else {
-                    bestValue = std::min(bestValue, value);
-                }
-            }
-        }
-    }
-
-    return bestValue;
-}
-
-// Find the best move using the minimax algorithm
-template <typename T>
-std::pair<int, int> WordAiPlayer<T>::getBestMove() {
-    int bestValue = std::numeric_limits<int>::min();
-    std::pair<std::pair<int, int>, T> bestMove = {{-1, -1}, 'A'};
-
-    int randomIndex = rand() % 26;
-    T opponentSymbol = 'A' + randomIndex;;
-
-    // First, check if we can win in the next move
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            if (this->boardPtr->update_board(i, j, this->symbol)) {
-                if (this->boardPtr->is_win()) {
-                    this->boardPtr->update_board(i, j, 0); // Undo move
-                    return {i, j}; // Winning move found
-                }
-                this->boardPtr->update_board(i, j, 0); // Undo move
-            }
-        }
-    }
-
-    // Second, check if the opponent can win in their next move and block them
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            if (this->boardPtr->update_board(i, j, opponentSymbol)) {
-                if (this->boardPtr->is_win()) {
-                    this->boardPtr->update_board(i, j, 0); // Undo move
-                    return {i, j}; // Block opponent's winning move
-                }
-                this->boardPtr->update_board(i, j, 0); // Undo move
-            }
-        }
-    }
-
-    // If no immediate win or block, use MinMax to find the best move
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            if (this->boardPtr->update_board(i, j, this->symbol)) {
-                int moveValue = calculateMinMax(this->symbol, false);
-                this->boardPtr->update_board(i, j, 0); // Undo move
-
-                if (moveValue > bestValue) {
-                    bestMove = {i, j};
-                    bestValue = moveValue;
-                }
-            }
-        }
-    }
-
-
-    return bestMove;
-}
-
-
-
-
 #endif
-
