@@ -8,11 +8,11 @@ template <typename T>
 class UltimateBoard:public Board<T> {
 public:
     UltimateBoard();
-    bool update_board (int x , int y , T symbol);
-    void display_board () ;
-    bool is_win() ;
-    bool is_draw();
-    bool game_is_over();
+    bool update_board (int x , int y , T symbol) override;
+    void display_board () override;
+    bool is_win() override;
+    bool is_draw()override;
+    bool game_is_over()override;
 
 
 };
@@ -55,7 +55,7 @@ UltimateBoard<T>::UltimateBoard() {
 }
 
 template <typename T>
-bool UltimateBoard<T>::update_board(int x, int y, T mark) {
+bool UltimateBoard<T>::update_board(int x, int y, T mark)  {
     // Only update if move is valid
     if (!(x < 0 || x >= this->rows || y < 0 || y >= this->columns) && (this->board[x][y] == 0|| mark == 0)) {
         if (mark == 0){
@@ -183,7 +183,7 @@ UltimatePlayer<T>::UltimatePlayer(string name, T symbol) : Player<T>(name, symbo
 
 template <typename T>
 void UltimatePlayer<T>::getmove(int& x, int& y) {
-    cout << "\nPlease enter your move x and y (0 to 2) and a letter separated by spaces: ";
+    cout << "\nPlease enter your move x and y (0 to 2) separated by spaces: ";
     cin >> x >> y;
 }
 
