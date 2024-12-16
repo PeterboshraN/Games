@@ -3,9 +3,9 @@
 #include "PyramicX_O.h"
 #include "WordX_O.h"
 #include "UltimateX_O.h"
-#include "FourByFour_Tic_Tac_Toe.h" // Include the 4x4 Tic-Tac-Toe header file
-#include "ConnectFour.h" // Include the Connect Four header file
-#include "Numerical_Game.h" // Include the Connect Four header file
+#include "FourByFour_Tic_Tac_Toe.h" 
+#include "ConnectFour.h" 
+#include "Numerical_Game.h" 
 
 using namespace std;
 
@@ -23,7 +23,7 @@ int main() {
         cout << "2. Word Tic-tac-toe\n";
         cout << "3. Ultimate Tic-tac-toe\n";
         cout << "4. 4x4 Tic-tac-toe\n";
-        cout << "5. Connect Four\n"; // Added option for Connect Four
+        cout << "5. Connect Four\n"; 
         cout << "6. Numerical Tic-tac-toe\n";
         cout << "7. Exit\n";
         cout << "Your choice: ";
