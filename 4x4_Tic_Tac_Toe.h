@@ -1,181 +1,171 @@
-#ifndef GAMES_4X4_TIC_TAC_TOE_H
-#define GAMES_4X4_TIC_TAC_TOE_H
+#ifndef FOURBYFOUR_TIC_TAC_TOE_H
+#define FOURBYFOUR_TIC_TAC_TOE_H
 
 #include "BoardGame_Classes.h"
-#include <iostream>
 #include <vector>
+#include <iostream>
+#include <cstdlib> // For rand()
+#include <ctime>
 using namespace std;
 
+// Global variables for new position
+int new_x;
+int new_y;
+
+// Pointers to global variables
+int* ptr_new_x = &new_x;
+int* ptr_new_y = &new_y;
+
+// FourByFourBoard Class
 template <typename T>
-class FourByFourboard : public Board<T> {
-protected:
-   vector<pair<int, int>> player1_tokens;
-   vector<pair<int, int>> player2_tokens;
+class FourByFourBoard : public Board<T> {
 public:
-    FourByFourboard() {
-        this->rows = this->columns = 4;
-        this->board = new T*[this->rows];
-        for (int i = 0; i < this->rows; ++i) {
-            this->board[i] = new T[this->columns];
-            for (int j = 0; j < this->columns; ++j) {
-                this->board[i][j] = '.';
-            }
-        }
+    FourByFourBoard();
+    bool update_board(int x, int y, T symbol) override;
+    void display_board() override;
+    bool is_win() override;
+    bool is_draw() override;
+    bool game_is_over() override;
 
-        player1_tokens =  {{0, 1}, {0 , 3} , {3, 0} , {3 , 2}};
-        player2_tokens = {{0, 0} ,{0 , 2}, {3 , 1} , {3 , 3}};
-        for (auto& token : player1_tokens) {
-            this->board[token.first][token.second] = 'X';
-        }
-        for (auto& token : player2_tokens) {
-            this->board[token.first][token.second] = 'O';
-        }
-
-        this->n_moves = 0;
-    }
-    vector<pair<int , int>> getPlayer1_tokens(){
-        return player1_tokens ;
-    }
-    vector<pair<int , int>> getPlayer2_tokens(){
-        return player2_tokens ;
-    }
-
-    void display_board() override {
-        cout << "\n4x4 Tic-Tac-Toe board:\n";
-        for (int i = 0; i < this->rows; ++i) {
-            for (int j = 0; j < this->columns; ++j) {
-                cout << this->board[i][j] << " ";
-            }
-            cout << endl;
-        }
-    }
-
-    bool update_board(int x, int y, T symbol) override {
-        int new_x, new_y;
-        cout << "Enter the New position (New_row New_column): ";
-        cin >> new_x >> new_y;
-
-        if (x < 0 || x >= this->rows || y < 0 || y >= this->columns || this->board[x][y] != symbol) {
-            cout << "Invalid move. The selected token doesn't match your symbol.\n";
-            return false;
-        }
-
-        if (new_x < 0 || new_x >= this->rows || new_y < 0 || new_y >= this->columns || this->board[new_x][new_y] != '.') {
-            cout << "Invalid move. The target cell is out of bounds or not empty.\n";
-            return false;
-        }
-
-        int dx = abs(x - new_x);
-        int dy = abs(y - new_y);
-        if (dx + dy != 1) {
-            cout << "Invalid move. You can only move one step in any direction.\n";
-            return false;
-        }
-
-        this->board[x][y] = '.';
-        this->board[new_x][new_y] = symbol;
-
-        auto& tokens = (symbol == 'X') ? player1_tokens : player2_tokens;
-        for (auto& token : tokens) {
-            if (token.first == x && token.second == y) {
-                token.first = new_x;
-                token.second = new_y;
-                break;
-            }
-        }
-
-        ++this->n_moves;
-        return true;
-    }
-
-    bool is_win() override {
-        for (int i = 0; i < this->rows; ++i) {
-            for (int j = 0; j < this->columns; ++j) {
-                if (this->board[i][j] != '.') {
-                    T current_symbol = this->board[i][j];
-
-                    if (j + 2 < this->columns && this->board[i][j] == this->board[i][j + 1] && this->board[i][j] == this->board[i][j + 2]) {
-                        return true;
-                    }
-
-                    if (i + 2 < this->rows && this->board[i][j] == this->board[i + 1][j] && this->board[i][j] == this->board[i + 2][j]) {
-                        return true;
-                    }
-
-                    if (i + 2 < this->rows && j + 2 < this->columns && this->board[i][j] == this->board[i + 1][j + 1] && this->board[i][j] == this->board[i + 2][j + 2]) {
-                        return true;
-                    }
-
-                    if (i - 2 >= 0 && j + 2 < this->columns && this->board[i][j] == this->board[i - 1][j + 1] && this->board[i][j] == this->board[i - 2][j + 2]) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    bool is_draw() override {
-        return this->n_moves == this->rows * this->columns && !is_win();
-    }
-
-    bool game_is_over() override {
-        return is_win() || is_draw();
-    }
-    ~FourByFourboard() {
-        for (int i = 0; i < this->rows; ++i) {
-            delete[] this->board[i];
-        }
-        delete[] this->board;
-    }
+private:
+    vector<pair<int, int>> player1_tokens;
+    vector<pair<int, int>> player2_tokens;
 };
 
+// FourByFourPlayer Class
 template <typename T>
 class FourByFourPlayer : public Player<T> {
 public:
-    FourByFourPlayer(string n, T symbol) : Player<T>(n, symbol) {}
-
-    void getmove(int& x, int& y) override {
-
-        cout << this->name << " (" << this->symbol << "), Enter the current position of your token (Old_row Old_column): ";
-        cin >> x >> y;
-    }
+    FourByFourPlayer(string name, T symbol);
+    void getmove(int& x, int& y) override;
 };
+
+// RandomFourByFourPlayer Class
 template <typename T>
 class RandomFourByFourPlayer : public RandomPlayer<T> {
-private:
-     FourByFourboard<T>& board;
-
 public:
-    RandomFourByFourPlayer(FourByFourboard<T>& boardRef, T symbol)
-            : RandomPlayer<T>(symbol), board(boardRef) {
-        srand(time(0));
+    RandomFourByFourPlayer(T symbol);
+    void getmove(int& x, int& y) override;
+};
+
+//--------------------------------------- IMPLEMENTATION
+
+#include <cmath>
+
+// Constructor for FourByFourBoard
+template <typename T>
+FourByFourBoard<T>::FourByFourBoard() {
+    this->rows = this->columns = 4;
+    this->board = new T*[this->rows];
+    for (int i = 0; i < this->rows; i++) {
+        this->board[i] = new T[this->columns];
+        for (int j = 0; j < this->columns; j++) {
+            this->board[i][j] = '.';
+        }
     }
 
-    void getmove(int& x, int& y) override {
-        vector<pair<int, int>> tokens = (this->symbol == 'X') ? board.getPlayer1_tokens() : board.getPlayer2_tokens();
-        auto token = tokens[rand() % tokens.size()];
-        x = token.first;
-        y = token.second;
+    player1_tokens = {{0, 1}, {0, 3}, {3, 0}, {3, 2}};
+    player2_tokens = {{0, 0}, {0, 2}, {3, 1}, {3, 3}};
 
-        // Choose a random valid move
-        vector<pair<int, int>> directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-        bool moved = false;
-        for (int i = 0; i < 4; ++i) {
-            int dir_idx = rand() % directions.size();
-            int new_x = x + directions[dir_idx].first;
-            int new_y = y + directions[dir_idx].second;
-            if (new_x >= 0 && new_x < 4 && new_y >= 0 && new_y < 4 && board.board[new_x][new_y] == '.') {
-                x = new_x;
-                y = new_y;
-                moved = true;
-                break;
+    for (const auto& token : player1_tokens) {
+        this->board[token.first][token.second] = 'X';
+    }
+    for (const auto& token : player2_tokens) {
+        this->board[token.first][token.second] = 'O';
+    }
+
+    this->n_moves = 0;
+}
+
+// Update board state
+template <typename T>
+bool FourByFourBoard<T>::update_board(int x, int y, T symbol) {
+    if (x < 0 || x >= this->rows || y < 0 || y >= this->columns || this->board[x][y] != symbol) {
+        return false;
+    }
+
+    if (*ptr_new_x < 0 || *ptr_new_x >= this->rows || *ptr_new_y < 0 || *ptr_new_y >= this->columns || this->board[*ptr_new_x][*ptr_new_y] != '.') {
+        return false;
+    }
+
+    if (abs(x - *ptr_new_x) + abs(y - *ptr_new_y) != 1) {
+        return false;
+    }
+
+    this->board[x][y] = '.';
+    this->board[*ptr_new_x][*ptr_new_y] = symbol;
+    this->n_moves++;
+    return true;
+}
+
+// Display the board
+template <typename T>
+void FourByFourBoard<T>::display_board() {
+    cout << "\n4x4 Tic-Tac-Toe Board with Positions:\n";
+    for (int i = 0; i < this->rows; ++i) {
+        for (int j = 0; j < this->columns; ++j) {
+            cout << this->board[i][j] << "(" << i << ", " << j << ") ";
+        }
+        cout << endl;
+    }
+}
+
+// Check for win condition
+template <typename T>
+bool FourByFourBoard<T>::is_win() {
+    for (int i = 0; i < this->rows; i++) {
+        for (int j = 0; j < this->columns; j++) {
+            if (this->board[i][j] != '.' && (
+                    (j + 2 < this->columns && this->board[i][j] == this->board[i][j + 1] && this->board[i][j] == this->board[i][j + 2]) ||
+                    (i + 2 < this->rows && this->board[i][j] == this->board[i + 1][j] && this->board[i][j] == this->board[i + 2][j]) ||
+                    (i + 2 < this->rows && j + 2 < this->columns && this->board[i][j] == this->board[i + 1][j + 1] && this->board[i][j] == this->board[i + 2][j + 2]) ||
+                    (i - 2 >= 0 && j + 2 < this->columns && this->board[i][j] == this->board[i - 1][j + 1] && this->board[i][j] == this->board[i - 2][j + 2]))) {
+                return true;
             }
         }
-        if (!moved) {
-            cout << "No valid moves available for " << this->name << ".\n";
-        }
     }
-};
-#endif
+    return false;
+}
+
+// Check for draw condition
+template <typename T>
+bool FourByFourBoard<T>::is_draw() {
+    return this->n_moves == this->rows * this->columns && !is_win();
+}
+
+// Check if the game is over
+template <typename T>
+bool FourByFourBoard<T>::game_is_over() {
+    return is_win() || is_draw();
+}
+
+// Constructor for FourByFourPlayer
+template <typename T>
+FourByFourPlayer<T>::FourByFourPlayer(string name, T symbol) : Player<T>(name, symbol) {}
+
+// Get move for FourByFourPlayer
+template <typename T>
+void FourByFourPlayer<T>::getmove(int& x, int& y) {
+    cout << this->name << " (" << this->symbol << "), enter the current position (row column): ";
+    cin >> x >> y;
+    cout << "Enter the new position (row column): ";
+    cin >> *ptr_new_x >> *ptr_new_y;
+}
+
+// Constructor for RandomFourByFourPlayer
+template <typename T>
+RandomFourByFourPlayer<T>::RandomFourByFourPlayer(T symbol) : RandomPlayer<T>(symbol) {
+    srand(static_cast<unsigned int>(time(0)));
+}
+
+// Get move for RandomFourByFourPlayer
+template <typename T>
+void RandomFourByFourPlayer<T>::getmove(int& x, int& y) {
+
+    x = rand() % 4; // Randomly choose a row between 0 and 3
+    y = rand() % 4;// Randomly choose a column between 0 and 3
+    *ptr_new_x = rand() % 4; // Randomly choose a new row between 0 and 3
+    *ptr_new_y = rand() % 4;// Randomly choose a new column between 0 and 3
+}
+
+#endif // FOURBYFOUR_TIC_TAC_TOE_H
