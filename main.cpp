@@ -3,6 +3,9 @@
 #include "PyramicX_O.h"
 #include "WordX_O.h"
 #include "UltimateX_O.h"
+#include "FourByFour_Tic_Tac_Toe.h" // Include the 4x4 Tic-Tac-Toe header file
+#include "ConnectFour.h" // Include the Connect Four header file
+#include "Numerical_Game.h" // Include the Connect Four header file
 
 using namespace std;
 
@@ -18,18 +21,182 @@ int main() {
         cout << "Choose a game:\n";
         cout << "1. Pyramic Tic-tac-toe\n";
         cout << "2. Word Tic-tac-toe\n";
-        cout << "3. Ultimate Tic-tac-toe\n"; // Added option for Ultimate Tic-tac-toe
-        cout << "4. Exit\n";
+        cout << "3. Ultimate Tic-tac-toe\n";
+        cout << "4. 4x4 Tic-tac-toe\n";
+        cout << "5. Connect Four\n"; // Added option for Connect Four
+        cout << "6. Numerical Tic-tac-toe\n";
+        cout << "7. Exit\n";
         cout << "Your choice: ";
         cin >> GameChoice;
 
-        if (GameChoice == 4) {
+        if (GameChoice == 7) {
             cout << "Thank you for playing! Goodbye!\n";
             exitGame = true;
             break;
         }
 
-        if (GameChoice == 1) {
+        if (GameChoice == 6) {
+            B = new NumericalBoard<char>();
+            cout << "\n*** Numerical Tic-tac-toe ***\n";
+
+            // Set up Player 1
+            string player1Name;
+            cout << "Enter Player 1 name: ";
+            cin >> player1Name;
+            cout << "Choose Player 1 type:\n";
+            cout << "1. Human\n";
+            cout << "2. Random Computer\n";
+            cout << "Your choice: ";
+            cin >> choice;
+
+            switch (choice) {
+                case 1:
+                    players[0] = new HumanNumericalPlayer<char>(player1Name, 'X');
+                    break;
+                case 2:
+                    players[0] = new RandomNumericalPlayer<char>('X');
+                    break;
+                default:
+                    cout << "Invalid choice for Player 1. Restarting the menu...\n";
+                    delete B;
+                    continue;
+            }
+
+            // Set up Player 2
+            string player2Name;
+            cout << "\nEnter Player 2 name: ";
+            cin >> player2Name;
+            cout << "Choose Player 2 type:\n";
+            cout << "1. Human\n";
+            cout << "2. Random Computer\n";
+            cout << "Your choice: ";
+            cin >> choice;
+
+            switch (choice) {
+                case 1:
+                    players[1] = new HumanNumericalPlayer<char>(player2Name, 'O');
+                    break;
+                case 2:
+                    players[1] = new RandomNumericalPlayer<char>('O');
+                    break;
+                default:
+                    cout << "Invalid choice for Player 2. Restarting the menu...\n";
+                    delete B;
+                    delete players[0];
+                    continue;
+            }
+
+            GameManager<char> NumericalGame(B, players);
+            NumericalGame.run();
+        }
+
+        if (GameChoice == 5) {
+            B = new ConnectFourBoard<char>();
+            cout << "\n*** Connect Four ***\n";
+
+            // Set up Player 1
+            string playerXName;
+            cout << "Enter Player X name: ";
+            cin >> playerXName;
+            cout << "Choose Player X type:\n";
+            cout << "1. Human\n";
+            cout << "2. Random Computer\n";
+            cout << "Your choice: ";
+            cin >> choice;
+
+            switch (choice) {
+                case 1:
+                    players[0] = new HumanConnectPlayer<char>(playerXName, 'X');
+                    break;
+                case 2:
+                    players[0] = new RandomConnectPlayer<char>('X');
+                    break;
+                default:
+                    cout << "Invalid choice for Player X. Restarting the menu...\n";
+                    delete B;
+                    continue;
+            }
+
+            // Set up Player 2
+            string player2Name;
+            cout << "\nEnter Player 2 name: ";
+            cin >> player2Name;
+            cout << "Choose Player 2 type:\n";
+            cout << "1. Human\n";
+            cout << "2. Random Computer\n";
+            cout << "Your choice: ";
+            cin >> choice;
+
+            switch (choice) {
+                case 1:
+                    players[1] = new HumanConnectPlayer<char>(player2Name, 'O');
+                    break;
+                case 2:
+                    players[1] = new RandomConnectPlayer<char>('O');
+                    break;
+                default:
+                    cout << "Invalid choice for Player 2. Restarting the menu...\n";
+                    delete B;
+                    delete players[0];
+                    continue;
+            }
+
+            GameManager<char> ConnectFourGame(B, players);
+            ConnectFourGame.run();
+        } else if (GameChoice == 4) {
+            B = new FourByFourBoard<char>();
+            cout << "\n*** 4x4 Tic-tac-toe ***\n";
+
+            // Set up Player 1
+            string playerXName;
+            cout << "Enter Player X name: ";
+            cin >> playerXName;
+            cout << "Choose Player X type:\n";
+            cout << "1. Human\n";
+            cout << "2. Random Computer\n";
+            cout << "Your choice: ";
+            cin >> choice;
+
+            switch (choice) {
+                case 1:
+                    players[0] = new FourByFourPlayer<char>(playerXName, 'X');
+                    break;
+                case 2:
+                    players[0] = new RandomFourByFourPlayer<char>('X');
+                    break;
+                default:
+                    cout << "Invalid choice for Player X. Restarting the menu...\n";
+                    delete B;
+                    continue;
+            }
+
+            // Set up Player 2
+            string player2Name;
+            cout << "\nEnter Player 2 name: ";
+            cin >> player2Name;
+            cout << "Choose Player 2 type:\n";
+            cout << "1. Human\n";
+            cout << "2. Random Computer\n";
+            cout << "Your choice: ";
+            cin >> choice;
+
+            switch (choice) {
+                case 1:
+                    players[1] = new FourByFourPlayer<char>(player2Name, 'O');
+                    break;
+                case 2:
+                    players[1] = new RandomFourByFourPlayer<char>('O');
+                    break;
+                default:
+                    cout << "Invalid choice for Player 2. Restarting the menu...\n";
+                    delete B;
+                    delete players[0];
+                    continue;
+            }
+
+            GameManager<char> FourByFourGame(B, players);
+            FourByFourGame.run();
+        } else if (GameChoice == 1) {
             B = new pyramicBoard<char>();
             cout << "\n*** Pyramic Tic-tac-toe ***\n";
 
@@ -175,7 +342,7 @@ int main() {
 
             // Set up Player 2
             string player2Name;
-            cout << "Enter Player 2 name: ";
+            cout << "\nEnter Player 2 name: ";
             cin >> player2Name;
             cout << "Choose Player 2 type:\n";
             cout << "1. Human\n";
@@ -201,24 +368,12 @@ int main() {
             UltimateGame.run();
         } else {
             cout << "Invalid choice. Please try again.\n";
-            continue;
         }
 
-        // Clean up
+        // Cleanup
+        delete players[0];
+        delete players[1];
         delete B;
-        for (int i = 0; i < 2; ++i) {
-            delete players[i];
-        }
-
-        // Ask if the user wants to play again
-        int playAgain;
-        cout << "\nWould you like to play another game? \n";
-        cout << "1. Yes\n2. No\nYour choice: ";
-        cin >> playAgain;
-        if (playAgain != 1) {
-            exitGame = true;
-            cout << "Thank you for playing! Goodbye!\n";
-        }
     }
 
     return 0;
